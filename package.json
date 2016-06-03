@@ -1,0 +1,19 @@
+{
+  "name": "promise-conditional",
+  "version": "1.0.0",
+  "description": "...",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "blue-tape": "0.2.0",
+    "tape": "4.5.1"
+  },
+  "scripts": {
+    "test": "tape test.js"
+  }
+}
