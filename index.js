@@ -41,6 +41,8 @@ module.exports = function conditional () {
 
 function addCondition (self, key, fn) {
   var step = last(self.steps)
+  if (!step) throw new Error('promise-conditional: ' + key + '(): no steps defined yet')
+
   var consequence = chain(step.consequence, key, fn)
 
   var steps = replaceLast(self.steps, {
