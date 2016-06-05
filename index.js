@@ -40,10 +40,9 @@ module.exports = function conditional () {
  */
 
 function addCondition (self, key, fn) {
-  // { ...self, consequences: [ ...head, { ...last, consequence: consequence(..) } ] }
   var step = last(self.steps)
-  var lastConsequence = step.consequence
-  var consequence = function (d) { return Promise.resolve(lastConsequence(d))[key](fn) }
+  var consequence = chain(step.consequence, key, fn)
+
   var steps = replaceLast(self.steps, {
     condition: step.condition,
     consequence: consequence
@@ -88,3 +87,29 @@ function replaceLast (list, item) {
 function push (list, item) {
   return list.concat([ item ])
 }
+
+/*
+ * Adds to a function chain. The result of this can be chained again.
+ *
+ *    function last () { ... }
+ *
+ *    newFn = chain(last, 'then', fn)
+ *    // returns: (d) => last(d).then(fn)
+ *
+ *    Promise.resolve(...).then(newFn)
+ *
+ */
+
+function chain (last, key, fn) {
+  if (last === identity) {
+    return function (d) {
+      // Optimization; not really needed.
+      return Promise.resolve(d)[key](fn)
+    }
+  } else {
+    return function (d) {
+      return Promise.resolve(last(d))[key](fn)
+    }
+  }
+}
+
