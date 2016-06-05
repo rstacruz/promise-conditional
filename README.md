@@ -16,6 +16,19 @@ getArticles()
 
 [![Status](https://travis-ci.org/rstacruz/promise-conditional.svg?branch=master)](https://travis-ci.org/rstacruz/promise-conditional "See test builds")
 
+## Install
+
+```
+npm install --save promise-conditional
+```
+
+```js
+var condition = require('promise-conditional')  // Legacy
+import condition from 'promise-conditional'     // ES2015+
+```
+
+It relies on [any-promise](https://www.npmjs.com/package/any-promise) to find a Promise library. You can use [bluebird](https://www.npmjs.com/package/bluebird), [q](https://www.npmjs.com/package/q), [when](https://www.npmjs.com/package/when), or the native `Promise` implementation of Node.js or the browser.
+
 ## API
 
 ### condition

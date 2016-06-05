@@ -1,4 +1,5 @@
 var assign = require('object-assign')
+var Promise = require('any-promise')
 
 module.exports = function conditional () {
   function end () {
