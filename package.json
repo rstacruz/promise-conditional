@@ -26,5 +26,8 @@
   },
   "scripts": {
     "test": "tape test.js"
+  },
+  "dependencies": {
+    "object-assign": "4.1.0"
   }
 }

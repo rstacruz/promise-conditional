@@ -1,4 +1,4 @@
-var assign = Object.assign
+var assign = require('object-assign')
 
 module.exports = function conditional () {
   function end () {
@@ -7,7 +7,7 @@ module.exports = function conditional () {
       var handled
       return self.steps.reduce(function (last, step) {
         return last
-          .then(d => {
+          .then(function (d) {
             if (handled) return d
             return Promise.resolve(step.condition(value))
               .then(function (conditionValue) {
@@ -24,7 +24,7 @@ module.exports = function conditional () {
   }
 
   return {
-    steps: [], // [ { condition: fn, consequence: fn } ]
+    steps: [], // [ { condition: fn, consequence: fn }, ... ]
     then: function (fn) { return addCondition(this, 'then', fn) },
     catch: function (fn) { return addCondition(this, 'catch', fn) },
     finally: function (fn) { return addCondition(this, 'finally', fn) },
