@@ -1,17 +1,28 @@
 {
   "name": "promise-conditional",
+  "description": "Use if-then-else in promise chains",
   "version": "1.0.0",
-  "description": "...",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "author": "Rico Sta. Cruz <rico@ricostacruz.com>",
+  "bugs": {
+    "url": "https://github.com/rstacruz/promise-conditional/issues"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "blue-tape": "0.2.0",
     "tape": "4.5.1"
+  },
+  "homepage": "https://github.com/rstacruz/promise-conditional#readme",
+  "keywords": [
+    "conditional",
+    "else",
+    "if",
+    "promise",
+    "then"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rstacruz/promise-conditional.git"
   },
   "scripts": {
     "test": "tape test.js"
