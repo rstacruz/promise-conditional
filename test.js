@@ -120,4 +120,29 @@ test('.then() with no steps', function (t) {
   t.end()
 })
 
+test('errors', function (t) {
+  return Promise.resolve(1)
+    .then(condition()
+      .if(isTrue)
+        .then(d => { throw new Error('oh no') })
+      .end())
+    .then(result => t.equal(result, 1))
+    .catch(err => {
+      t.equal(err.message, 'oh no')
+    })
+})
+
+test('catch', function (t) {
+  return Promise.resolve(1)
+    .then(condition()
+      .if(isTrue)
+        .then(d => { throw new Error('oh no') })
+        .catch(err => {
+          t.equal(err.message, 'oh no')
+          return 111
+        })
+      .end())
+    .then(result => t.equal(result, 111))
+})
+
 test('eslint', require('eslint-engine/tape')())

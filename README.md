@@ -31,13 +31,13 @@ Starts an `if` step. `condition` is a function that gets the input value. If it 
 
 ### elseIf
 
-> `condition().elseIf(condition)`
+> `condition() ... elseIf(condition)`
 
 Starts an `elseIf` step. `condition` is a function that gets the input value. If it returns true, the subsequent `then`/`catch`/`finally` calls will be invoked, but only if the other `if` steps have not been invoked.
 
 ### else
 
-> `condition().else()`
+> `condition() ... else()`
 
 Starts an `else` step. The subsequent `then`/`catch`/`finally` calls will be invoked, but only if the other `if`/`elseIf` steps have not been invoked.
 
@@ -46,6 +46,12 @@ Starts an `else` step. The subsequent `then`/`catch`/`finally` calls will be inv
 > `condition() ... end()`
 
 Returns a function that you can pass onto `.then(...)` that runs the entire chain.
+
+### then/catch/finally
+
+> `condition().if().then(next)`
+
+Adds a `then`/`catch`/`finally` step if the last `if` condition is true.
 
 ## Thanks
 
