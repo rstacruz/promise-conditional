@@ -114,4 +114,3 @@ function chain (last, key, fn) {
     }
   }
 }
-
