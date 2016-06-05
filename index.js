@@ -1,6 +1,10 @@
 var assign = Object.assign
 
-module.exports = function ifever (condition) {
+module.exports = function conditional () {
+  function if_ (condition) {
+    return assign({}, this, { condition: condition })
+  }
+
   function then (fn) {
     return assign({}, this, push(this, ['then', fn]))
   }
@@ -17,11 +21,11 @@ module.exports = function ifever (condition) {
     return assign({}, this, { mode: 'falseSteps' })
   }
 
-  function endif () {
+  function end () {
     var self = this
     return function (value) {
       var promise = Promise.resolve(value)
-      return promise.then(condition)
+      return promise.then(self.condition)
       .then(function (conditionValue) {
         if (conditionValue) {
           return applySteps(Promise.resolve(value), self.trueSteps)
@@ -35,11 +39,13 @@ module.exports = function ifever (condition) {
   return {
     trueSteps: [],
     falseSteps: [],
+    condition: null,
     mode: 'trueSteps',
     then: then,
     catch: katch,
+    if: if_,
     else: else_,
-    endif: endif
+    end: end
   }
 }
 

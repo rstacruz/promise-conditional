@@ -1,36 +1,30 @@
-var when = require('./index')
+var condition = require('./index')
 
-function getArticles () {
-  return Promise.resolve([ ])
-}
-
-function sortArticles (list) {
-  return list.sort()
-}
-
-
-function push (item) {
-  return function (list) {
-    return list.concat([ item ])
+function push (b) {
+  return function (a) {
+    return a + b
   }
 }
 
 var test = require('blue-tape')
 
-test('lol', function (t) {
-  return Promise.resolve([])
-    .then(when(data => data.length < 10)
-        .then(push(100))
-      .endif())
-    .then(push(200))
-    .then(result => t.deepEqual(result, [ 100, 200 ]))
+test('if true', function (t) {
+  return Promise.resolve(10)
+    .then(condition()
+      .if(data => data === 10)
+        .then(push(20))
+      .end())
+    .then(push(30))
+    .then(result => t.equal(result, 60))
 })
 
-test('lol', function (t) {
-  return Promise.resolve([])
-    .then(when(data => data.length > 10)
-        .then(push(100))
-      .endif())
-    .then(push(200))
-    .then(result => t.deepEqual(result, [ 200 ]))
+test('if false', function (t) {
+  return Promise.resolve(10)
+    .then(condition()
+      .if(data => data !== 10)
+        .then(push(20))
+      .end())
+    .then(push(30))
+    .then(result => t.equal(result, 40))
 })
+
