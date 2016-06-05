@@ -1,3 +1,7 @@
+# promise-conditional
+
+Use if-then-else in promises.
+
 ## If-then-else
 
 ```js

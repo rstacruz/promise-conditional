@@ -1,30 +1,41 @@
 var condition = require('./index')
+var test = require('blue-tape')
 
-function push (b) {
+function add (b) {
   return function (a) {
     return a + b
   }
 }
 
-var test = require('blue-tape')
-
 test('if true', function (t) {
-  return Promise.resolve(10)
+  return Promise.resolve(1)
     .then(condition()
-      .if(data => data === 10)
-        .then(push(20))
+      .if(data => data === 1)
+        .then(add(10))
       .end())
-    .then(push(30))
-    .then(result => t.equal(result, 60))
+    .then(add(100))
+    .then(result => t.equal(result, 111))
 })
 
 test('if false', function (t) {
-  return Promise.resolve(10)
+  return Promise.resolve(1)
     .then(condition()
-      .if(data => data !== 10)
-        .then(push(20))
+      .if(data => data !== 1)
+        .then(add(10))
       .end())
-    .then(push(30))
-    .then(result => t.equal(result, 40))
+    .then(add(100))
+    .then(result => t.equal(result, 101))
+})
+
+test('if else', function (t) {
+  return Promise.resolve(1)
+    .then(condition()
+      .if(data => data !== 1)
+        .then(add(10))
+      .else()
+        .then(add(20))
+      .end())
+    .then(add(100))
+    .then(result => t.equal(result, 121))
 })
 

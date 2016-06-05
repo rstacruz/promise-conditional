@@ -1,58 +1,90 @@
 var assign = Object.assign
 
 module.exports = function conditional () {
-  function if_ (condition) {
-    return assign({}, this, { condition: condition })
-  }
-
-  function then (fn) {
-    return assign({}, this, push(this, ['then', fn]))
-  }
-  
-  function katch (fn) {
-    return assign({}, this, push(this, ['catch', fn]))
-  }
-
-  function push (self, item) {
-    return { [self.mode]: self[self.mode].concat([ item ]) }
-  }
-
-  function else_ () {
-    return assign({}, this, { mode: 'falseSteps' })
-  }
-
   function end () {
     var self = this
     return function (value) {
-      var promise = Promise.resolve(value)
-      return promise.then(self.condition)
-      .then(function (conditionValue) {
-        if (conditionValue) {
-          return applySteps(Promise.resolve(value), self.trueSteps)
-        } else {
-          return applySteps(Promise.resolve(value), self.falseSteps)
-        }
-      })
+      var handled
+      return self.steps.reduce(function (last, step) {
+        return last
+          .then(d => {
+            if (handled) return d
+            return Promise.resolve(step.condition(value))
+              .then(function (conditionValue) {
+                if (conditionValue) {
+                  handled = true
+                  return step.consequence(value)
+                } else {
+                  return value
+                }
+              })
+          })
+      }, Promise.resolve(value))
     }
   }
 
   return {
-    trueSteps: [],
-    falseSteps: [],
-    condition: null,
-    mode: 'trueSteps',
-    then: then,
-    catch: katch,
-    if: if_,
-    else: else_,
+    steps: [], // [ { condition: fn, consequence: fn } ]
+    then: function (fn) { return addCondition(this, 'then', fn) },
+    catch: function (fn) { return addCondition(this, 'catch', fn) },
+    finally: function (fn) { return addCondition(this, 'finally', fn) },
+    if: function (cond) { return addStep(this, cond) },
+    elseIf: function (cond) { return addStep(this, cond) },
+    else: function (cond) { return addStep(this, getTrue) },
     end: end
   }
 }
 
-function applySteps (promise, steps) {
-  return steps.reduce(function (promise, step) {
-    var method = step[0]
-    var fn = step[1]
-    return promise[method](fn)
-  }, promise)
+/*
+ * Delegates
+ */
+
+function addCondition (self, key, fn) {
+  // { ...self, consequences: [ ...head, { ...last, consequence: consequence(..) } ] }
+  var step = last(self.steps)
+  var lastConsequence = step.consequence
+  var consequence = function (d) { return Promise.resolve(lastConsequence(d))[key](fn) }
+  var steps = replaceLast(self.steps, {
+    condition: step.condition,
+    consequence: consequence
+  })
+
+  return assign({}, self, { steps: steps })
+}
+
+function addStep (self, condition) {
+  var steps = push(self.steps, {
+    condition: condition,
+    consequence: identity
+  })
+
+  return assign({}, self, { steps: steps })
+}
+
+/*
+ * helpers
+ */
+
+function identity (value) {
+  return value
+}
+
+function getTrue () {
+  return true
+}
+
+function last (list) {
+  return list[list.length - 1]
+}
+
+function exceptLast (list) {
+  return list.slice(0, list.length - 1)
+}
+
+function replaceLast (list, item) {
+  return push(exceptLast(list), item)
+}
+
+function push (list, item) {
+  return list.concat([ item ])
 }
