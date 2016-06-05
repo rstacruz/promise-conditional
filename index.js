@@ -6,19 +6,18 @@ module.exports = function conditional () {
     return function (value) {
       var handled
       return self.steps.reduce(function (last, step) {
-        return last
-          .then(function (d) {
-            if (handled) return d
-            return Promise.resolve(step.condition(value))
-              .then(function (conditionValue) {
-                if (conditionValue) {
-                  handled = true
-                  return step.consequence(value)
-                } else {
-                  return value
-                }
-              })
-          })
+        return last.then(function (d) {
+          if (handled) return d
+          return Promise.resolve(step.condition(value))
+            .then(function (conditionValue) {
+              if (conditionValue) {
+                handled = true
+                return step.consequence(value)
+              } else {
+                return value
+              }
+            })
+        })
       }, Promise.resolve(value))
     }
   }
