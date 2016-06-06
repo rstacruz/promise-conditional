@@ -5,21 +5,8 @@ module.exports = function conditional () {
   function end () {
     var self = this
     return function (value) {
-      var handled
-      return self.steps.reduce(function (last, step) {
-        return last.then(function (d) {
-          if (handled) return d
-          return Promise.resolve(step.condition(value))
-            .then(function (conditionValue) {
-              if (conditionValue) {
-                handled = true
-                return step.consequence(value)
-              } else {
-                return value
-              }
-            })
-        })
-      }, Promise.resolve(value))
+      var state = { handled: false }
+      return self.steps.reduce(applyStep(state, value), Promise.resolve(value))
     }
   }
 
@@ -36,22 +23,11 @@ module.exports = function conditional () {
 }
 
 /*
- * Delegates
+ * Adds a new step to `this.steps`.
+ * Each `if` / `elseIf` / `else` is a step, and each step has its own
+ * `condition` (what's passed to *if(...)*) and `consequence` (the chain of
+ * `then(...)`s).
  */
-
-function addConsequence (self, key, fn) {
-  var step = last(self.steps)
-  if (!step) throw new Error('promise-conditional: ' + key + '(): no steps defined yet')
-
-  var consequence = chain(step.consequence, key, fn)
-
-  var steps = replaceLast(self.steps, {
-    condition: step.condition,
-    consequence: consequence
-  })
-
-  return assign({}, self, { steps: steps })
-}
 
 function addStep (self, condition) {
   var steps = push(self.steps, {
@@ -60,6 +36,46 @@ function addStep (self, condition) {
   })
 
   return assign({}, self, { steps: steps })
+}
+
+/*
+ * Chains a new consequence to the last `this.steps[-1].consequence`.
+ * The consequence is always a single function; it uses `chain()` to tack
+ * on new consequences after the last.
+ */
+
+function addConsequence (self, key, fn) {
+  var step = last(self.steps)
+  if (!step) throw new Error('promise-conditional: ' + key + '(): no steps defined yet')
+
+  var steps = replaceLast(self.steps, {
+    condition: step.condition,
+    consequence: chain(step.consequence, key, fn)
+  })
+
+  return assign({}, self, { steps: steps })
+}
+
+/*
+ * Runs a step's `condition`, and if it gives true, run its `consequence`.
+ * `last` is the result of the last step (a promise).
+ */
+
+function applyStep (state, value) {
+  return function (last, step) {
+    return last.then(function (d) {
+      if (state.handled) return d
+      return Promise.resolve(step.condition(value))
+        .then(function (conditionValue) {
+          if (conditionValue) {
+            state.handled = true
+            return step.consequence(value)
+          } else {
+            return value
+          }
+        })
+    })
+  }
 }
 
 /*
