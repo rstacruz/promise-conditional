@@ -25,9 +25,9 @@ module.exports = function conditional () {
 
   return {
     steps: [], // [ { condition: fn, consequence: fn }, ... ]
-    then: function (fn) { return addCondition(this, 'then', fn) },
-    catch: function (fn) { return addCondition(this, 'catch', fn) },
-    finally: function (fn) { return addCondition(this, 'finally', fn) },
+    then: function (fn) { return addConsequence(this, 'then', fn) },
+    catch: function (fn) { return addConsequence(this, 'catch', fn) },
+    finally: function (fn) { return addConsequence(this, 'finally', fn) },
     if: function (cond) { return addStep(this, cond) },
     elseIf: function (cond) { return addStep(this, cond) },
     else: function (cond) { return addStep(this, getTrue) },
@@ -39,7 +39,7 @@ module.exports = function conditional () {
  * Delegates
  */
 
-function addCondition (self, key, fn) {
+function addConsequence (self, key, fn) {
   var step = last(self.steps)
   if (!step) throw new Error('promise-conditional: ' + key + '(): no steps defined yet')
 
