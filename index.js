@@ -12,12 +12,12 @@ module.exports = function conditional () {
 
   return {
     steps: [], // [ { condition: fn, consequence: fn }, ... ]
-    then: function (fn) { return addConsequence(this, 'then', fn) },
-    catch: function (fn) { return addConsequence(this, 'catch', fn) },
-    finally: function (fn) { return addConsequence(this, 'finally', fn) },
-    if: function (cond) { return addStep(this, cond) },
-    elseIf: function (cond) { return addStep(this, cond) },
-    else: function (cond) { return addStep(this, getTrue) },
+    then: addConsequence('then'),
+    catch: addConsequence('catch'),
+    finally: addConsequence('finally'),
+    if: addStep(),
+    elseIf: addStep(),
+    else: addStep(getTrue),
     end: end
   }
 }
@@ -29,13 +29,15 @@ module.exports = function conditional () {
  * `then(...)`s).
  */
 
-function addStep (self, condition) {
-  var steps = push(self.steps, {
-    condition: condition,
-    consequence: identity
-  })
+function addStep (defaultCond) {
+  return function (condition) {
+    var steps = push(this.steps, {
+      condition: defaultCond || condition,
+      consequence: identity
+    })
 
-  return assign({}, self, { steps: steps })
+    return assign({}, this, { steps: steps })
+  }
 }
 
 /*
@@ -44,16 +46,18 @@ function addStep (self, condition) {
  * on new consequences after the last.
  */
 
-function addConsequence (self, key, fn) {
-  var step = last(self.steps)
-  if (!step) throw new Error('promise-conditional: ' + key + '(): no steps defined yet')
+function addConsequence (key) {
+  return function (fn) {
+    var step = last(this.steps)
+    if (!step) throw new Error('promise-conditional: ' + key + '(): no steps defined yet')
 
-  var steps = replaceLast(self.steps, {
-    condition: step.condition,
-    consequence: chain(step.consequence, key, fn)
-  })
+    var steps = replaceLast(this.steps, {
+      condition: step.condition,
+      consequence: chain(step.consequence, key, fn)
+    })
 
-  return assign({}, self, { steps: steps })
+    return assign({}, this, { steps: steps })
+  }
 }
 
 /*
