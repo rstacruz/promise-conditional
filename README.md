@@ -39,31 +39,31 @@ Starts a condition chain. This is exported via `require('promise-conditional')`.
 
 ### if
 
-> `condition().if(condition)`
+> `conditional().if(condition)`
 
 Starts an `if` step. `condition` is a function that gets the input value. If it returns true, the subsequent `then`/`catch`/`finally` calls will be invoked.
 
 ### elseIf
 
-> `condition() ... elseIf(condition)`
+> `conditional() ... elseIf(condition)`
 
 Starts an `elseIf` step. `condition` is a function that gets the input value. If it returns true, the subsequent `then`/`catch`/`finally` calls will be invoked, but only if the other `if` steps have not been invoked.
 
 ### else
 
-> `condition() ... else()`
+> `conditional() ... else()`
 
 Starts an `else` step. The subsequent `then`/`catch`/`finally` calls will be invoked, but only if the other `if`/`elseIf` steps have not been invoked.
 
 ### end
 
-> `condition() ... end()`
+> `conditional() ... end()`
 
 Returns a function that you can pass onto `.then(...)` that runs the entire chain.
 
 ### then/catch/finally
 
-> `condition().if().then(next)`
+> `conditional().if().then(next)`
 
 Adds a `then`/`catch`/`finally` step if the last `if` condition is true.
 
