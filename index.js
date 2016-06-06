@@ -67,7 +67,7 @@ function addStep (self, condition) {
  */
 
 function identity (value) {
-  return value
+  return Promise.resolve(value)
 }
 
 function getTrue () {
@@ -93,7 +93,9 @@ function push (list, item) {
 /*
  * Adds to a function chain. The result of this can be chained again.
  *
- *    function last () { ... }
+ *    function last () {
+ *      return Promise.resolve('foobar')
+ *    }
  *
  *    newFn = chain(last, 'then', fn)
  *    // returns: (d) => last(d).then(fn)
@@ -103,14 +105,7 @@ function push (list, item) {
  */
 
 function chain (last, key, fn) {
-  if (last === identity) {
-    return function (d) {
-      // Optimization; not really needed.
-      return Promise.resolve(d)[key](fn)
-    }
-  } else {
-    return function (d) {
-      return Promise.resolve(last(d))[key](fn)
-    }
+  return function (d) {
+    return last(d)[key](fn)
   }
 }
