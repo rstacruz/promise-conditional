@@ -4,7 +4,7 @@
 
 ```js
 getArticles()
-  .then(condition()
+  .then(conditional()
     .if(data => data.length > 10)
       .then(doIfTrue)
       .then(alsoDoIfTrue)
@@ -24,18 +24,18 @@ npm install --save promise-conditional
 ```
 
 ```js
-var condition = require('promise-conditional')  // Legacy
-import condition from 'promise-conditional'     // ES2015+
+var conditional = require('promise-conditional')  // Legacy
+import conditional from 'promise-conditional'     // ES2015+
 ```
 
 It relies on [any-promise](https://www.npmjs.com/package/any-promise) to find a Promise library. You can use [bluebird](https://www.npmjs.com/package/bluebird), [q](https://www.npmjs.com/package/q), [when](https://www.npmjs.com/package/when), or the native `Promise` implementation of Node.js or the browser.
 
 ## API
 
-### condition
-> `condition()`
+### conditional
+> `conditional()`
 
-Starts a condition chain.
+Starts a condition chain. This is exported via `require('promise-conditional')`.
 
 ### if
 
