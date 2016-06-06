@@ -1,3 +1,10 @@
+## [v1.2.0]
+> Jun  6, 2016
+
+- Refactor; no functional changes.
+
+[v1.2.0]: https://github.com/rstacruz/promise-conditional/compare/v1.1.0...v1.2.0
+
 ## [v1.1.0]
 > Jun  5, 2016
 
